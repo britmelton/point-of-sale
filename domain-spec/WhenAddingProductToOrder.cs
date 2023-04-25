@@ -5,28 +5,31 @@ namespace domain_spec
 {
     public class WhenAddingProductToOrder
     {
-        [Fact]
-        public void ThenProductExistsInOrder()
-        {
-            var order = new Order();
-            var product = new Product("product1", 3.99m, "abc345");
-            order.Products.Add(product);
+        private readonly Order _order;
+        private readonly Product _product = new("product1", 3.99m, "abc345");
+        private readonly Product _product2 = new("product2", 4.99m, "abc789");
 
-            order.Products.Should().Contain(product);
+        public WhenAddingProductToOrder()
+        {
+            _order = new();
         }
 
         [Fact]
-        public void WithMultipleProduct_ThenAllProductsExistInOrder()
+        public void ThenProductExistsInOrder()
         {
-            var order = new Order();
-            var product = new Product("product1", 3.99m, "abc345");
-            var product2 = new Product("product2", 4.99m, "abc789");
+            _order.Products.Add(_product);
 
-            order.Products.Add(product);
-            order.Products.Add(product2);
+            _order.Products.Should().Contain(_product);
+        }
 
-            order.Products.Should().Contain(product);
-            order.Products.Should().Contain(product2);
+        [Fact]
+        public void WithMultipleProducts_ThenAllProductsExistInOrder()
+        {
+            _order.Products.Add(_product);
+            _order.Products.Add(_product2);
+
+            _order.Products.Should().Contain(_product);
+            _order.Products.Should().Contain(_product2);
         }
     }
 }
