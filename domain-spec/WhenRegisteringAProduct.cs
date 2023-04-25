@@ -28,5 +28,13 @@ namespace domain_spec
 
             product.Price.Should().Be(2.99m);
         }
+
+        [Fact]
+        public void ThenIdIsSet()
+        {
+            var product = new Product("name", 2.99m, "abc123");
+
+            product.Id.Should().NotBeEmpty();
+        }
     }
 }
