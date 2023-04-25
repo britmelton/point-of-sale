@@ -24,19 +24,19 @@ namespace domain_spec
         [Fact]
         public void ThenNameIsSet()
         {
-            _product.Name.Should().Be("name");
+            _product.Name.Should().Be(_name);
         }
 
         [Fact]
         public void ThenPriceIsSet()
         {
-            _product.Price.Should().Be(2.99m);
+            _product.Price.Should().Be(_price);
         }
 
         [Fact]
         public void ThenSkuIsSet()
         {
-            _product.Sku.Should().Be("abc123");
+            _product.Sku.Should().Be(_sku);
         }
     }
 }
