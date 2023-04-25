@@ -5,36 +5,38 @@ namespace domain_spec
 {
     public class WhenRegisteringAProduct
     {
-        [Fact]
-        public void ThenNameIsSet()
+        private readonly Product _product;
+        private readonly string _name = "name";
+        private readonly decimal _price = 2.99m;
+        private readonly string _sku = "abc123";
+
+        public WhenRegisteringAProduct()
         {
-            var product = new Product("name", 2.99m, "abc123");
-
-            product.Name.Should().Be("name");
-        }
-
-        [Fact]
-        public void ThenSkuIsSet()
-        {
-            var product = new Product("name",2.99m, "abc123");
-
-            product.Sku.Should().Be("abc123");
-        }
-
-        [Fact]
-        public void ThenPriceIsSet()
-        {
-            var product = new Product("name",2.99m, "abc123");
-
-            product.Price.Should().Be(2.99m);
+            _product = new Product(_name, _price, _sku);
         }
 
         [Fact]
         public void ThenIdIsSet()
         {
-            var product = new Product("name", 2.99m, "abc123");
+            _product.Id.Should().NotBeEmpty();
+        }
 
-            product.Id.Should().NotBeEmpty();
+        [Fact]
+        public void ThenNameIsSet()
+        {
+            _product.Name.Should().Be("name");
+        }
+
+        [Fact]
+        public void ThenPriceIsSet()
+        {
+            _product.Price.Should().Be(2.99m);
+        }
+
+        [Fact]
+        public void ThenSkuIsSet()
+        {
+            _product.Sku.Should().Be("abc123");
         }
     }
 }
