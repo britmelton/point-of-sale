@@ -21,6 +21,7 @@ namespace domain
         public void Add(Product product)
         {
             Products.Add(product);
+            CalculateSubtotal();
         }
 
         public void CalculateSubtotal()
@@ -56,6 +57,7 @@ namespace domain
             foreach (var product in Products)
             {
                 Products.Remove(product);
+                Subtotal -= product.Price;
                 break;
             }
         }
