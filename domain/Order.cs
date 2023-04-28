@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 
 namespace domain
 {
@@ -46,6 +47,17 @@ namespace domain
             }
 
             return $"ORD-{r}";
+        }
+
+        public void RemoveProduct(string sku)
+        {
+            _ = Products.Where(p => p.Sku == sku);
+
+            foreach (var product in Products)
+            {
+                Products.Remove(product);
+                break;
+            }
         }
     }
 }
