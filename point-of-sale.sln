@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "domain-spec", "domain-spec\domain-spec.csproj", "{E9114D08-F994-4EB4-8C62-09BE443FD708}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "domain-spec", "domain-spec\domain-spec.csproj", "{E9114D08-F994-4EB4-8C62-09BE443FD708}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "domain", "domain\domain.csproj", "{0C4BAA5E-D03B-4710-A584-AA89255496AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "domain", "domain\domain.csproj", "{0C4BAA5E-D03B-4710-A584-AA89255496AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F7B158A-F608-40CC-8852-6E94D84A642F}"
 	ProjectSection(SolutionItems) = preProject

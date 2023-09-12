@@ -1,14 +1,14 @@
-﻿using domain;
-using FluentAssertions;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
 
-namespace domain_spec
+namespace Domain.Spec
 {
     public class WhenRegisteringAProduct
     {
         private readonly Product _product;
-        private readonly string _name = "name";
-        private readonly decimal _price = 2.99m;
-        private readonly string _sku = "abc123";
+        private const string _name = "name";
+        private const decimal _price = 2.99m;
+        private const string _sku = "abc123";
 
         public WhenRegisteringAProduct()
         {
@@ -16,26 +16,12 @@ namespace domain_spec
         }
 
         [Fact]
-        public void ThenIdIsSet()
+        public void ThenAllPropertiesAreSet()
         {
+            using var scope = new AssertionScope();
             _product.Id.Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public void ThenNameIsSet()
-        {
             _product.Name.Should().Be(_name);
-        }
-
-        [Fact]
-        public void ThenPriceIsSet()
-        {
             _product.Price.Should().Be(_price);
-        }
-
-        [Fact]
-        public void ThenSkuIsSet()
-        {
             _product.Sku.Should().Be(_sku);
         }
     }

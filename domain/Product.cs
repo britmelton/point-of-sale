@@ -1,18 +1,19 @@
-﻿namespace domain
+﻿namespace Domain
 {
-    public class Product
+    public class Product : Entity
     {
-        public Guid Id { get; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string Sku { get; set; }
-
-        public Product(string name, decimal price, string sku, Guid id = default)
+        public Product(string name, decimal price, string sku, ushort quantityOnHand = default, Guid id = default) : base(id)
         {
             Name = name;
             Price = price;
             Sku = sku;
-            Id = id == default ? Guid.NewGuid() : id;
+            QuantityOnHand = quantityOnHand;
         }
+
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public ushort QuantityOnHand { get; set; }
+        public string Sku { get; set; }
+
     }
 }

@@ -1,7 +1,6 @@
-﻿using domain;
-using FluentAssertions;
+﻿using FluentAssertions;
 
-namespace domain_spec
+namespace Domain.Spec
 {
     public class WhenStartingANewOrder
     {

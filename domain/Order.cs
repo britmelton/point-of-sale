@@ -1,65 +1,60 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
-namespace domain
+namespace Domain
 {
-    public class Order
+    public class Order : Entity
     {
-        public Guid Id { get; }
-        public string OrderNumber { get; }
-        public List<Product> Products { get; set; }
-        public decimal Subtotal { get; set; }
-
-
-        public Order(string? orderNumber = default, Guid id = default)
+        public Order(string? orderNumber = default, Guid id = default) : base(id)
         {
-            Products = new();
+            LineItems = new();
             OrderNumber = orderNumber ?? GenerateOrderNumber();
-            Id = id == default ? Guid.NewGuid() : id;
         }
 
-        public void Add(Product product)
+        public bool IsComplete { get; set; }
+        public string OrderNumber { get; }
+        public List<LineItem> LineItems { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal Total { get; set; }
+
+        public void Add(LineItem lineItem)
         {
-            Products.Add(product);
+            LineItems.Add(lineItem);
             CalculateSubtotal();
         }
 
         public void CalculateSubtotal()
         {
-            decimal subtotal = 0;
+            var subtotal = LineItems.Sum(li => li.Price);
 
-            foreach (var product in Products)
-            {
-                subtotal += product.Price;
-            }
-            
             Subtotal = subtotal;
         }
 
         private static string GenerateOrderNumber()
         {
-            var randomNumber = new byte[4];
-            var r = "";
+            var random = new byte[4];
+            var r = string.Empty;
 
             using (var rng = RandomNumberGenerator.Create())
             {
-                rng.GetBytes(randomNumber);
-                r = Convert.ToBase64String(randomNumber);
+                rng.GetBytes(random);
+                r = Convert.ToBase64String(random);
             }
 
             return $"ORD-{r}";
         }
 
-        public void RemoveProduct(string sku)
+        public void RemoveProduct(Guid id)
         {
-            _ = Products.Where(p => p.Sku == sku);
+            var lineItem = LineItems.First(li => li.Id == id);
 
-            foreach (var product in Products)
-            {
-                Products.Remove(product);
-                Subtotal -= product.Price;
-                break;
-            }
+            LineItems.Remove(lineItem);
+            Subtotal -= lineItem.Price;
+        }
+
+        public void Submit()
+        {
+            Total = Subtotal;
+            IsComplete = true;
         }
     }
 }
