@@ -17,5 +17,6 @@
         public Guid ProductId { get; set; }
         public decimal Price { get; set; }
         public ushort Quantity { get; set; }
+
     }
 }

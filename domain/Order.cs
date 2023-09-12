@@ -19,6 +19,8 @@ namespace Domain
         public void Add(LineItem lineItem)
         {
             LineItems.Add(lineItem);
+            lineItem.Quantity++;
+
             CalculateSubtotal();
         }
 

@@ -25,6 +25,33 @@ namespace Domain.Spec
         }
 
         [Fact]
+        public void ThenLineItemQuantityIsUpdated()
+        {
+            var lineItem = new LineItem(_order.Id, _product);
+
+            _order.Add(lineItem);
+            _order.Add(lineItem);
+
+            _order.LineItems[0].Quantity.Should().Be(2);
+        }
+
+        [Fact]
+        public void ThenEachLineItemQuantityIsUpdated()
+        {
+            var lineItem = new LineItem(_order.Id, _product);
+            var lineItem2 = new LineItem(_order.Id, _product2);
+
+            _order.Add(lineItem);
+            _order.Add(lineItem);
+            _order.Add(lineItem2);
+            _order.Add(lineItem2);
+            _order.Add(lineItem2);
+
+            _order.LineItems[0].Quantity.Should().Be(2);
+            _order.LineItems[2].Quantity.Should().Be(3);
+        }
+
+        [Fact]
         public void WithMultipleLineItems_ThenOrderContainsAll()
         {
             var lineItem = new LineItem(_order.Id, _product);
