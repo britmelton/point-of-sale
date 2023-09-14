@@ -2,7 +2,7 @@
 {
     public interface IOrderReadService
     {
-        public Order Find(Guid id);
+        public OrderDto Find(Guid id);
 
     }
 }
