@@ -24,8 +24,6 @@ namespace Api.Spec
 
             var result = await HttpClient.PostAsJsonAsync("", dto);
 
-            //var order = await HttpClient.GetFromJsonAsync<OrderDetails>(result.Headers.Location);
-
             var readService = Resolve<IOrderReadService>();
             var id = Guid.Parse(result.Headers.Location.Segments[^1]);
 
