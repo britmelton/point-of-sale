@@ -17,7 +17,7 @@ namespace Domain.Spec
         [Fact]
         public void ThenLineItemExistsInOrder()
         {
-            var lineItem = new LineItem(_order.Id, _product);
+            var lineItem = new LineItem(_order.Id, _product, 4.78m);
 
             _order.Add(lineItem);
 
@@ -27,7 +27,7 @@ namespace Domain.Spec
         [Fact]
         public void ThenLineItemQuantityIsUpdated()
         {
-            var lineItem = new LineItem(_order.Id, _product);
+            var lineItem = new LineItem(_order.Id, _product, 2.75m);
 
             _order.Add(lineItem);
             _order.Add(lineItem);
@@ -38,8 +38,8 @@ namespace Domain.Spec
         [Fact]
         public void ThenEachLineItemQuantityIsUpdated()
         {
-            var lineItem = new LineItem(_order.Id, _product);
-            var lineItem2 = new LineItem(_order.Id, _product2);
+            var lineItem = new LineItem(_order.Id, _product, 7.89m);
+            var lineItem2 = new LineItem(_order.Id, _product2, 7.89m);
 
             _order.Add(lineItem);
             _order.Add(lineItem);
@@ -54,8 +54,8 @@ namespace Domain.Spec
         [Fact]
         public void WithMultipleLineItems_ThenOrderContainsAll()
         {
-            var lineItem = new LineItem(_order.Id, _product);
-            var lineItem2 = new LineItem(_order.Id, _product2);
+            var lineItem = new LineItem(_order.Id, _product, 4.67m);
+            var lineItem2 = new LineItem(_order.Id, _product2, 7.89m);
             _order.Add(lineItem);
             _order.Add(lineItem2);
 
@@ -67,11 +67,11 @@ namespace Domain.Spec
         [Fact]
         public void WithOnlyOneLineItem_ThenSubtotalIsUpdated()
         {
-            var lineItem = new LineItem(_order.Id, _product);
+            var lineItem = new LineItem(_order.Id, _product, 2.99m);
             _order.Add(lineItem);
             _order.CalculateSubtotal();
 
-            var expectedSubtotal = _product.Price;
+            var expectedSubtotal = 2.99m;
 
             _order.Subtotal.Should().Be(expectedSubtotal);
         }
@@ -79,14 +79,14 @@ namespace Domain.Spec
         [Fact]
         public void WithMultipleLineItems_ThenSubtotalIsUpdated()
         {
-            var lineItem = new LineItem(_order.Id, _product);
-            var lineItem2 = new LineItem(_order.Id, _product2);
+            var lineItem = new LineItem(_order.Id, _product, 7.89m);
+            var lineItem2 = new LineItem(_order.Id, _product2, 5.99m);
             _order.Add(lineItem);
             _order.Add(lineItem2);
 
             _order.CalculateSubtotal();
 
-            var expectedSubtotal = _product.Price + _product2.Price;
+            var expectedSubtotal = 7.89m + 5.99m;
 
             _order.Subtotal.Should().Be(expectedSubtotal);
         }

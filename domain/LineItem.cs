@@ -2,10 +2,14 @@
 {
     public class LineItem : Entity
     {
-        public LineItem(Guid orderId, Product product) : this(Guid.NewGuid(), orderId, product.Id, product.Price, product.QuantityOnHand)
-        { }
+        public LineItem(Guid orderId, Product product, decimal price)
+        {
+            OrderId = orderId;
+            ProductId = product.Id;
+            Price = price;
+        }
 
-        public LineItem(Guid id, Guid orderId, Guid productId, decimal price, ushort quantity) : base(id)
+        public LineItem(Guid orderId, Guid productId, decimal price, ushort quantity, Guid id = default) : base(id)
         {
             OrderId = orderId;
             ProductId = productId;
@@ -17,6 +21,5 @@
         public Guid ProductId { get; set; }
         public decimal Price { get; set; }
         public ushort Quantity { get; set; }
-
     }
 }

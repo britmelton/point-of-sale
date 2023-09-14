@@ -16,9 +16,9 @@ namespace Domain.Spec
         public WhenRemovingLineItemFromOrder()
         {
             _order = new();
-            _lineItem = new(_order.Id, _product);
-            _lineItem2 = new(_order.Id, _product2);
-            _lineItem3 = new(_order.Id, _product3);
+            _lineItem = new(_order.Id, _product, 3.99m);
+            _lineItem2 = new(_order.Id, _product2, 7.89m);
+            _lineItem3 = new(_order.Id, _product3, 4.99m);
 
             _order.Add(_lineItem);
             _order.Add(_lineItem2);

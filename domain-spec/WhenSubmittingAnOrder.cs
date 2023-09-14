@@ -14,8 +14,8 @@ namespace Domain.Spec
         public WhenSubmittingAnOrder()
         {
             _order = new();
-            _lineItem = new(_order.Id, _product);
-            _lineItem2 = new(_order.Id, _product2);
+            _lineItem = new(_order.Id, _product, 7.89m);
+            _lineItem2 = new(_order.Id, _product2, 4.89m);
             _order.Add(_lineItem);
             _order.Add(_lineItem2);
         }

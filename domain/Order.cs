@@ -4,10 +4,27 @@ namespace Domain
 {
     public class Order : Entity
     {
-        public Order(string? orderNumber = default, Guid id = default) : base(id)
+
+        public Order(Guid id = default) : base(id)
         {
+            OrderNumber = GenerateOrderNumber();
             LineItems = new();
-            OrderNumber = orderNumber ?? GenerateOrderNumber();
+        }
+        public Order(List<LineItem> lineItems, string orderNumber, decimal subtotal, decimal total, Guid id = default) : base(id)
+        {
+            LineItems = lineItems;
+            OrderNumber = orderNumber;
+            Subtotal = subtotal;
+            Total = total;
+            OrderNumber = GenerateOrderNumber();
+        }
+
+        public Order(decimal subtotal, decimal total, Guid id = default) : base(id)
+        {
+            Subtotal = subtotal;
+            Total = total;
+            OrderNumber = GenerateOrderNumber();
+            LineItems = new();
         }
 
         public bool IsComplete { get; set; }
@@ -20,6 +37,15 @@ namespace Domain
         {
             LineItems.Add(lineItem);
             lineItem.Quantity++;
+
+            CalculateSubtotal();
+        }
+
+        public void AddLineItem(Guid productId, ushort quantity, decimal price)
+        {
+            var lineItem = new LineItem(Id, productId, price, quantity);
+
+            LineItems.Add(lineItem);
 
             CalculateSubtotal();
         }
