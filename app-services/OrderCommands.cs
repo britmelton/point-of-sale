@@ -2,9 +2,7 @@
 {
 
     public record SubmitOrderCommand(
-        List<LineItem> LineItems,
-        decimal Subtotal,
-        decimal Total
+        List<LineItem> LineItems
     );
 
     public record LineItem(

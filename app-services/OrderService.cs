@@ -13,8 +13,8 @@ namespace App.Services
 
         public Guid SubmitOrder(SubmitOrderCommand args)
         {
-            var(lineItems, subtotal, total) = args;
-            var order = new Order(subtotal, total);
+            var lineItems = args.LineItems;
+            var order = new Order();
 
             foreach (var item in lineItems)
             {

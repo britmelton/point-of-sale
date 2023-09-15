@@ -8,14 +8,14 @@ namespace Infrastructure.Write
 
         public Order(Domain.Order order) : base(order.Id)
         {
-            IsCompleted = order.IsComplete;
+            IsComplete = order.IsComplete;
             LineItems = order.LineItems.Select(li => (LineItem)li).ToList();
             OrderNumber = order.OrderNumber;
             Subtotal = order.Subtotal;
             Total = order.Total;
         }
 
-        public bool IsCompleted { get; set; }
+        public bool IsComplete { get; set; }
         public List<LineItem> LineItems { get; set; }
         public string OrderNumber { get; set; }
         [Precision(6, 2)]
@@ -33,7 +33,7 @@ namespace Infrastructure.Write
 
         public Order Update(Domain.Order order)
         {
-            IsCompleted = order.IsComplete;
+            IsComplete = order.IsComplete;
             LineItems = order.LineItems.Select(l => (LineItem)l).ToList();
             Subtotal = order.Subtotal;
             Total = order.Total;

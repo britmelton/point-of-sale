@@ -1,6 +1,7 @@
 ﻿namespace Api.DataContracts
 {
     public record OrderDetails(
+        bool IsComplete,
         List<LineItem> LineItems,
         string OrderNumber,
         decimal Subtotal,
@@ -8,8 +9,6 @@
     );
 
     public record SubmitOrder(
-        List<LineItem> LineItems,
-        decimal Subtotal,
-        decimal Total
+        List<LineItem> LineItems
     );
 }

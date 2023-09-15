@@ -19,14 +19,6 @@ namespace Domain
             OrderNumber = GenerateOrderNumber();
         }
 
-        public Order(decimal subtotal, decimal total, Guid id = default) : base(id)
-        {
-            Subtotal = subtotal;
-            Total = total;
-            OrderNumber = GenerateOrderNumber();
-            LineItems = new();
-        }
-
         public bool IsComplete { get; set; }
         public string OrderNumber { get; }
         public List<LineItem> LineItems { get; set; }
@@ -46,7 +38,6 @@ namespace Domain
             var lineItem = new LineItem(Id, productId, price, quantity);
 
             LineItems.Add(lineItem);
-
             CalculateSubtotal();
         }
 

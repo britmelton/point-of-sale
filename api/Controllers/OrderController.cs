@@ -21,8 +21,8 @@ namespace Api.Controllers
         [HttpPost]
         public IActionResult SubmitOrder([FromBody] SubmitOrder dto)
         {
-            var (lineItems, subtotal, total) = dto;
-            var command = new SubmitOrderCommand(lineItems.Select(li => (App.Services.LineItem)li).ToList(), subtotal, total);
+            var lineItems = dto.LineItems;
+            var command = new SubmitOrderCommand(lineItems.Select(li => (App.Services.LineItem)li).ToList());
 
             var orderId = _orderService.SubmitOrder(command);
             return CreatedAtRoute(nameof(Find), new { id = orderId }, null);

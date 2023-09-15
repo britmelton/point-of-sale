@@ -20,7 +20,7 @@ namespace Api.Spec
             var product = new Product("name", 4.99m, "abc123", 35);
             var lineItem = new LineItem(product.Id,3, 5.99m);
 
-            var dto = new SubmitOrder(new(){lineItem}, 5.99m, 5.99m);
+            var dto = new SubmitOrder(new(){lineItem});
 
             var result = await HttpClient.PostAsJsonAsync("", dto);
 
@@ -33,6 +33,7 @@ namespace Api.Spec
             order.Total.Should().Be(5.99m);
             order.OrderNumber.Should().NotBeNullOrEmpty();
             order.LineItems.Count.Should().Be(1);
+            order.IsComplete.Should().BeTrue();
         }
     }
 }
