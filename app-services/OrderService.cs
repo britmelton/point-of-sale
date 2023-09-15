@@ -1,51 +1,66 @@
 ﻿using Domain;
 
-namespace App.Services
+namespace App.Services;
+
+public class OrderService : IOrderService
 {
-    public class OrderService : IOrderService
+    private readonly IOrderRepository _orderRepo;
+
+    #region Creation
+
+    public OrderService(IOrderRepository orderRepo)
     {
-        private readonly IOrderRepository _orderRepo;
-
-        public OrderService(IOrderRepository orderRepo)
-        {
-            _orderRepo = orderRepo;
-        }
-
-        public Guid SubmitOrder(SubmitOrderCommand args)
-        {
-            var builder = new SubmitOrderBuilder();
-            builder.Load(args.LineItems);
-            builder.Build();
-            var order = builder.GetOrder();
-
-            order.Submit();
-
-            _orderRepo.CreateOrder(order);
-            _orderRepo.Update(order);
-
-            return order.Id;
-        }
+        _orderRepo = orderRepo;
     }
 
-    public class SubmitOrderBuilder : Order.Builder
+    #endregion
+
+    #region IOrderService Implementation
+
+    public Guid SubmitOrder(SubmitOrderCommand args)
     {
-        private List<LineItem> _lineItems = new();
-        private IEnumerator<LineItem> _enumerator;
-        public override void AddLineItem()
-        {
-            var lineItem = _enumerator.Current;
-            Order.AddLineItem(lineItem.ProductId, lineItem.Quantity, lineItem.Price);
-        }
+        var order = new SubmitOrderBuilder()
+            .Load(args.LineItems)
+            .Build()
+            .GetOrder();
+        order.Submit();
 
-        public override bool Next() => _enumerator.MoveNext();
+        _orderRepo.CreateOrder(order);
+        _orderRepo.Update(order);
 
-        public Order GetOrder() => Order;
-
-        public void Load(IEnumerable<LineItem> lineItems)
-        {
-            _lineItems.Clear();
-            _lineItems.AddRange(lineItems);
-            _enumerator = _lineItems.GetEnumerator();
-        }
+        return order.Id;
     }
+
+    #endregion
+}
+
+public class SubmitOrderBuilder : Order.Builder
+{
+    private IEnumerator<LineItem> _enumerator;
+    private readonly List<LineItem> _lineItems = new();
+
+    #region Public Interface
+
+    public SubmitOrderBuilder Load(IEnumerable<LineItem> lineItems)
+    {
+        _lineItems.Clear();
+        _lineItems.AddRange(lineItems);
+        _enumerator = _lineItems.GetEnumerator();
+
+        return this;
+    }
+
+    #endregion
+
+    #region Protected Interface
+
+    protected override void AddLineItem()
+    {
+        var (productId, quantity, price) = _enumerator.Current;
+        Order.AddLineItem(productId, quantity, price);
+    }
+
+    protected override bool Next() => _enumerator.MoveNext();
+
+    #endregion
 }

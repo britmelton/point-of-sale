@@ -17,6 +17,13 @@
             Quantity = quantity;
         }
 
+        public void Deconstruct(out Guid productId, out decimal price, out ushort quantity)
+        {
+            productId = ProductId;
+            price = Price;
+            quantity = Quantity;
+        }
+
         public Guid OrderId { get; set; }
         public Guid ProductId { get; set; }
         public decimal Price { get; set; }

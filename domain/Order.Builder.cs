@@ -18,19 +18,19 @@ public partial class Order
         #region Public Interface
 
         protected Order Order;
-        public void Build()
+        public Builder  Build()
         {
-            Order = new Order();
+            Order = new();
 
             while (Next())
-            {
                 AddLineItem();
-            }
-
+            
+            return this;
         }
 
-        public abstract void AddLineItem();
-        public abstract bool Next();
+        public Order GetOrder() => Order;
+        protected abstract void AddLineItem();
+        protected abstract bool Next();
 
 
         #endregion
