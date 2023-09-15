@@ -1,21 +1,58 @@
-﻿namespace Infrastructure.Read
+﻿namespace Infrastructure.Read;
+
+public class Order //reps order Table
 {
-    public class Order //reps order Table
+    #region Public Interface
+
+    public Guid Id { get; init; } //allows you to do the object initialization 
+    public bool IsComplete { get; init; }
+    public string OrderNumber { get; init; }
+    public decimal Subtotal { get; init; }
+    public decimal Total { get; init; }
+
+    #endregion
+}
+
+public class OrderDto
+{
+    private readonly List<LineItemDto> _lineItems = new();
+
+    #region Creation
+
+    public OrderDto(Guid id, bool isComplete, string orderNumber, decimal subtotal, decimal total)
     {
-        public Guid Id { get; init; } //allows you to do the object initialization 
-        public bool IsComplete { get; init; }
-        public string OrderNumber { get; init; }
-        public decimal Subtotal { get; init; }
-        public decimal Total { get; init; }
+        Id = id;
+        IsComplete = isComplete;
+        OrderNumber = orderNumber;
+        Subtotal = subtotal;
+        Total = total;
     }
 
-    public class OrderDto
+    public OrderDto(Order order) : this(order.Id, order.IsComplete, order.OrderNumber, order.Subtotal, order.Total)
     {
-        public Guid Id { get; set; }
-        public bool IsComplete { get; set; }
-        public List<LineItemDto> LineItems { get; set; } = new();
-        public string OrderNumber { get; set; }
-        public decimal Subtotal { get; set; }
-        public decimal Total { get; set; }
     }
+
+    #endregion
+
+    #region Public Interface
+
+    public Guid Id { get; }
+    public bool IsComplete { get; }
+    public IReadOnlyList<LineItemDto> LineItems => _lineItems.AsReadOnly();
+    public string OrderNumber { get; }
+    public decimal Subtotal { get; }
+    public decimal Total { get; }
+
+    public void Add(LineItemDto lineItem)
+    {
+        _lineItems.Add(lineItem);
+    }
+
+    #endregion
+
+    #region Static Interface
+
+    public static implicit operator OrderDto(Order order) => new(order);
+
+    #endregion
 }
