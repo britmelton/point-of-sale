@@ -2,7 +2,7 @@
 
 namespace Domain
 {
-    public class Order : Entity
+    public partial class Order : Entity
     {
 
         public Order(Guid id = default) : base(id)
@@ -10,6 +10,7 @@ namespace Domain
             OrderNumber = GenerateOrderNumber();
             LineItems = new();
         }
+
         public Order(List<LineItem> lineItems, string orderNumber, decimal subtotal, decimal total, Guid id = default) : base(id)
         {
             LineItems = lineItems;

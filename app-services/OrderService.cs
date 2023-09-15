@@ -13,19 +13,39 @@ namespace App.Services
 
         public Guid SubmitOrder(SubmitOrderCommand args)
         {
-            var lineItems = args.LineItems;
-            var order = new Order();
+            var builder = new SubmitOrderBuilder();
+            builder.Load(args.LineItems);
+            builder.Build();
+            var order = builder.GetOrder();
 
-            foreach (var item in lineItems)
-            {
-                order.AddLineItem(item.ProductId, item.Quantity, item.Price);
-            }
             order.Submit();
 
             _orderRepo.CreateOrder(order);
             _orderRepo.Update(order);
 
             return order.Id;
+        }
+    }
+
+    public class SubmitOrderBuilder : Order.Builder
+    {
+        private List<LineItem> _lineItems = new();
+        private IEnumerator<LineItem> _enumerator;
+        public override void AddLineItem()
+        {
+            var lineItem = _enumerator.Current;
+            Order.AddLineItem(lineItem.ProductId, lineItem.Quantity, lineItem.Price);
+        }
+
+        public override bool Next() => _enumerator.MoveNext();
+
+        public Order GetOrder() => Order;
+
+        public void Load(IEnumerable<LineItem> lineItems)
+        {
+            _lineItems.Clear();
+            _lineItems.AddRange(lineItems);
+            _enumerator = _lineItems.GetEnumerator();
         }
     }
 }
