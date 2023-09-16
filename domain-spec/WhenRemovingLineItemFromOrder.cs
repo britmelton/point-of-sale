@@ -43,6 +43,30 @@ public class WhenRemovingLineItemFromOrder
 
     [Theory]
     [MemberData(nameof(LineItems))]
+    public void ThenLineItemQuantityIsUpdated(List<Kernel.LineItem> lineItems)
+    {
+        var order = SubmitOrder(lineItems);
+        var lineItem = order.LineItems[0];
+
+        order.RemoveLineItem(lineItem.Id, 4);
+
+        order.LineItems[0].Quantity.Should().Be(2);
+    }
+
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void ThenLineItemTotalIsUpdated(List<Kernel.LineItem> lineItems)
+    {
+        var order = SubmitOrder(lineItems);
+        var lineItem = order.LineItems[0];
+
+        order.RemoveLineItem(lineItem.Id, 4);
+
+        order.LineItems[0].Total.Should().Be(9.98m);
+    }
+
+    [Theory]
+    [MemberData(nameof(LineItems))]
     public void WhereMultipleLineItemsAreRemoved_ThenLineItemsDoNotExistInOrder(List<Kernel.LineItem> lineItems)
     {
         var order = SubmitOrder(lineItems);
@@ -69,7 +93,7 @@ public class WhenRemovingLineItemFromOrder
         order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
         order.RemoveLineItem(lineItem2.Id, lineItem2.Quantity);
 
-        var expectedSubtotal = 47.12m; //lineItem3.Price * lineItem3.Quantity;
+        var expectedSubtotal = lineItem3.Price * lineItem3.Quantity;
 
         order.Subtotal.Should().Be(expectedSubtotal);
     }
