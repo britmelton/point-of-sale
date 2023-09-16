@@ -24,15 +24,7 @@ public partial class Order : Entity
     public decimal Subtotal { get; set; }
     public decimal Total { get; set; }
 
-    public void Add(LineItem lineItem)
-    {
-        LineItems.Add(lineItem);
-        lineItem.Quantity++;
-
-        CalculateSubtotal();
-    }
-
-    public void AddLineItem(Guid productId, ushort quantity, decimal price)
+    public void AddLineItem(Guid productId, decimal price, ushort quantity)
     {
         var lineItem = new LineItem(Id, productId, price, quantity);
 
@@ -44,9 +36,9 @@ public partial class Order : Entity
     {
         foreach (var lineItem in LineItems)
         {
-            lineItem.CalculateTotal();
+            lineItem.CalculateSubtotal();
         }
-        var subtotal = LineItems.Sum(li => li.Total);
+        var subtotal = LineItems.Sum(li => li.Subtotal);
 
         Subtotal = subtotal;
     }
@@ -73,7 +65,7 @@ public partial class Order : Entity
         if(lineItem.Quantity == 0)
             LineItems.Remove(lineItem);
 
-        lineItem.CalculateTotal();
+        lineItem.CalculateSubtotal();
         CalculateSubtotal();
     }
 

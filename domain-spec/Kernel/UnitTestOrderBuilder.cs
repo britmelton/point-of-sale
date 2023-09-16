@@ -23,7 +23,7 @@ public class UnitTestOrderBuilder : Order.Builder
     protected override void AddLineItem()
     {
         var (productId, quantity, price) = _enumerator.Current;
-        Order.AddLineItem(productId, quantity, price);
+        Order.AddLineItem(productId, price, quantity);
     }
 
     protected override bool Next() => _enumerator.MoveNext();

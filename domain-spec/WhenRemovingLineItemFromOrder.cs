@@ -62,7 +62,7 @@ public class WhenRemovingLineItemFromOrder
 
         order.RemoveLineItem(lineItem.Id, 4);
 
-        order.LineItems[0].Total.Should().Be(9.98m);
+        order.LineItems[0].Subtotal.Should().Be(9.98m);
     }
 
     [Theory]

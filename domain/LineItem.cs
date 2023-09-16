@@ -7,6 +7,7 @@ public class LineItem : Entity
         OrderId = orderId;
         ProductId = product.Id;
         Price = price;
+        Subtotal = CalculateSubtotal();
     }
 
     public LineItem(Guid orderId, Guid productId, decimal price, ushort quantity, Guid id = default) : base(id)
@@ -15,6 +16,7 @@ public class LineItem : Entity
         ProductId = productId;
         Price = price;
         Quantity = quantity;
+        Subtotal = CalculateSubtotal();
     }
 
     public void Deconstruct(out Guid productId, out decimal price, out ushort quantity)
@@ -28,11 +30,11 @@ public class LineItem : Entity
     public Guid ProductId { get; set; }
     public decimal Price { get; set; }
     public ushort Quantity { get; set; }
-    public decimal Total { get; set; }
+    public decimal Subtotal { get; set; }
 
-    public decimal CalculateTotal()
+    public decimal CalculateSubtotal()
     {
-        Total = Price * Quantity;
-        return Total;
+        Subtotal = Price * Quantity;
+        return Subtotal;
     }
 }
