@@ -30,7 +30,7 @@ namespace Api.Spec
             var order = readService.Find(id);
 
             order.Should().NotBeNull();
-            order.Total.Should().Be(5.99m);
+            order.Total.Should().Be(17.97m);
             order.OrderNumber.Should().NotBeNullOrEmpty();
             order.LineItems.Count.Should().Be(1);
             order.IsComplete.Should().BeTrue();

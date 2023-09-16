@@ -67,11 +67,13 @@ public class WhenSubmittingAnOrder
     public void ThenTotalIsSet(List<Kernel.LineItem> lineItems)
     {
         var order = SubmitOrder(lineItems);
+        var lineItem = order.LineItems[0];
+        var lineItem2 = order.LineItems[1];
 
-        var expected = _lineItem.Price + _lineItem2.Price;
+        var expectedTotal = lineItem.Price * lineItem.Quantity + lineItem2.Price * lineItem2.Quantity;
 
         using var scope = new AssertionScope();
         order.Total.Should().NotBe(0);
-        order.Total.Should().Be(expected);
+        order.Total.Should().Be(expectedTotal);
     }
 }

@@ -36,7 +36,7 @@ public class WhenRemovingLineItemFromOrder
         var order = SubmitOrder(lineItems);
         var lineItem = order.LineItems[0];
 
-        order.RemoveProduct(lineItem.Id);
+        order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
 
         order.LineItems.Should().NotContain(lineItem);
     }
@@ -49,8 +49,8 @@ public class WhenRemovingLineItemFromOrder
         var lineItem = order.LineItems[0];
         var lineItem2 = order.LineItems[1];
 
-        order.RemoveProduct(lineItem.Id);
-        order.RemoveProduct(lineItem2.Id);
+        order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
+        order.RemoveLineItem(lineItem2.Id, lineItem2.Quantity);
 
         using var scope = new AssertionScope();
         order.LineItems.Should().NotContain(lineItem);
@@ -64,11 +64,12 @@ public class WhenRemovingLineItemFromOrder
         var order = SubmitOrder(lineItems);
         var lineItem = order.LineItems[0];
         var lineItem2 = order.LineItems[1];
+        var lineItem3 = order.LineItems[2];
 
-        order.RemoveProduct(lineItem.Id);
-        order.RemoveProduct(lineItem2.Id);
+        order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
+        order.RemoveLineItem(lineItem2.Id, lineItem2.Quantity);
 
-        var expectedSubtotal = _lineItem3.Price;
+        var expectedSubtotal = 47.12m; //lineItem3.Price * lineItem3.Quantity;
 
         order.Subtotal.Should().Be(expectedSubtotal);
     }

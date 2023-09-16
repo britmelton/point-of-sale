@@ -23,7 +23,7 @@ public class WhenAddingLineItemToOrder
             .GetOrder();
         return order;
     }
-
+    
     [Theory]
     [MemberData(nameof(LineItems))]
     public void ThenLineItemsExistsInOrder(List<Kernel.LineItem> lineItems)
@@ -50,7 +50,7 @@ public class WhenAddingLineItemToOrder
     {
         var order = CreateOrder(lineItems);
 
-        var expectedSubtotal = 4.99m + 8.99m;
+        var expectedSubtotal = 92.87m;
 
         order.Subtotal.Should().Be(expectedSubtotal);
     }
