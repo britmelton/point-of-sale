@@ -28,6 +28,24 @@ public class WhenSubmittingAnOrder
 
     [Theory]
     [MemberData(nameof(LineItems))]
+    public void ThenIdIsSet(List<Kernel.LineItem> lineItems)
+    {
+        var order = SubmitOrder(lineItems);
+
+        order.Id.Should().NotBeEmpty();
+    }
+
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void ThenOrderNumberIsSet(List<Kernel.LineItem> lineItems)
+    {
+        var order = SubmitOrder(lineItems);
+
+        order.OrderNumber.Should().NotBeNullOrEmpty();
+    }
+
+    [Theory]
+    [MemberData(nameof(LineItems))]
     public void ThenLineItemsExistInOrder(List<Kernel.LineItem> lineItems)
     {
         var order = SubmitOrder(lineItems);

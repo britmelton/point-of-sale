@@ -1,58 +1,75 @@
-﻿using FluentAssertions;
+﻿using Domain.Spec.Kernel;
+using FluentAssertions;
 using FluentAssertions.Execution;
 
-namespace Domain.Spec
+namespace Domain.Spec;
+
+public class WhenRemovingLineItemFromOrder
 {
-    public class WhenRemovingLineItemFromOrder
+    private static readonly Product _product = new("product1", 3.99m, "abc345");
+    private static readonly Product _product2 = new("product2", 4.99m, "abc789");
+    private static readonly Product _product3 = new("product3", 6.99m, "abc749");
+    private static readonly Kernel.LineItem _lineItem = new(_product.Id, 6, 4.99m);
+    private static readonly Kernel.LineItem _lineItem2 = new(_product2.Id, 7, 8.99m);
+    private static readonly Kernel.LineItem _lineItem3 = new(_product3.Id, 8, 5.89m);
+
+    public static IEnumerable<object[]> LineItems()
     {
-        private readonly Order _order;
-        private readonly Product _product = new("product1", 3.99m, "abc345");
-        private readonly Product _product2 = new("product2", 4.99m, "abc789");
-        private readonly Product _product3 = new("product3", 6.99m, "abc749");
-        private readonly LineItem _lineItem;
-        private readonly LineItem _lineItem2;
-        private readonly LineItem _lineItem3;
+        yield return new object[] { new List<Kernel.LineItem>() { _lineItem, _lineItem2, _lineItem3 } };
+    }
 
-        public WhenRemovingLineItemFromOrder()
-        {
-            _order = new();
-            _lineItem = new(_order.Id, _product, 3.99m);
-            _lineItem2 = new(_order.Id, _product2, 7.89m);
-            _lineItem3 = new(_order.Id, _product3, 4.99m);
+    public static Order SubmitOrder(List<Kernel.LineItem> lineItems)
+    {
+        var order = new UnitTestOrderBuilder()
+            .Load(lineItems)
+            .Build()
+            .GetOrder();
+        order.Submit();
+        return order;
+    }
 
-            _order.Add(_lineItem);
-            _order.Add(_lineItem2);
-            _order.Add(_lineItem3);
-        }
 
-        [Fact]
-        public void ThenLineItemDoesNotExistInOrder()
-        {
-            _order.RemoveProduct(_lineItem.Id);
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void ThenLineItemDoesNotExistInOrder(List<Kernel.LineItem> lineItems)
+    {
+        var order = SubmitOrder(lineItems);
+        var lineItem = order.LineItems[0];
 
-            _order.LineItems.Should().NotContain(_lineItem);
-        }
+        order.RemoveProduct(lineItem.Id);
 
-        [Fact]
-        public void WhereMultipleLineItemsAreRemoved_ThenLineItemsDoNotExistInOrder()
-        {
-            _order.RemoveProduct(_lineItem.Id);
-            _order.RemoveProduct(_lineItem2.Id);
+        order.LineItems.Should().NotContain(lineItem);
+    }
 
-            using var scope = new AssertionScope();
-            _order.LineItems.Should().NotContain(_lineItem);
-            _order.LineItems.Should().NotContain(_lineItem2);
-        }
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void WhereMultipleLineItemsAreRemoved_ThenLineItemsDoNotExistInOrder(List<Kernel.LineItem> lineItems)
+    {
+        var order = SubmitOrder(lineItems);
+        var lineItem = order.LineItems[0];
+        var lineItem2 = order.LineItems[1];
 
-        [Fact]
-        public void ThenSubtotalIsUpdated()
-        {
-            _order.RemoveProduct(_lineItem.Id);
-            _order.RemoveProduct(_lineItem2.Id);
+        order.RemoveProduct(lineItem.Id);
+        order.RemoveProduct(lineItem2.Id);
 
-            var expectedSubtotal = _lineItem3.Price;
+        using var scope = new AssertionScope();
+        order.LineItems.Should().NotContain(lineItem);
+        order.LineItems.Should().NotContain(lineItem2);
+    }
 
-            _order.Subtotal.Should().Be(expectedSubtotal);
-        }
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void ThenSubtotalIsUpdated(List<Kernel.LineItem> lineItems)
+    {
+        var order = SubmitOrder(lineItems);
+        var lineItem = order.LineItems[0];
+        var lineItem2 = order.LineItems[1];
+
+        order.RemoveProduct(lineItem.Id);
+        order.RemoveProduct(lineItem2.Id);
+
+        var expectedSubtotal = _lineItem3.Price;
+
+        order.Subtotal.Should().Be(expectedSubtotal);
     }
 }

@@ -12,7 +12,7 @@ namespace Domain.Spec
 
         public WhenRegisteringAProduct()
         {
-            _product = new Product(_name, _price, _sku);
+            _product = new(_name, _price, _sku);
         }
 
         [Fact]

@@ -1,94 +1,57 @@
-﻿using FluentAssertions;
-using FluentAssertions.Execution;
+﻿using Domain.Spec.Kernel;
+using FluentAssertions;
 
-namespace Domain.Spec
+namespace Domain.Spec;
+
+public class WhenAddingLineItemToOrder
 {
-    public class WhenAddingLineItemToOrder
+    private static readonly Product _product = new("product1", 3.99m, "abc345");
+    private static readonly Product _product2 = new("product2", 4.99m, "abc789");
+    private static readonly Kernel.LineItem _lineItem = new(_product.Id, 6, 4.99m);
+    private static readonly Kernel.LineItem _lineItem2 = new(_product2.Id, 7, 8.99m);
+
+    public static IEnumerable<object[]> LineItems()
     {
-        private readonly Order _order;
-        private readonly Product _product = new("product1", 3.99m, "abc345");
-        private readonly Product _product2 = new("product2", 4.99m, "abc789");
+        yield return new object[] { new List<Kernel.LineItem>() { _lineItem, _lineItem2 } };
+    }
 
-        public WhenAddingLineItemToOrder()
-        {
-            _order = new();
-        }
+    public static Order CreateOrder(List<Kernel.LineItem> lineItems)
+    {
+        var order = new UnitTestOrderBuilder()
+            .Load(lineItems)
+            .Build()
+            .GetOrder();
+        return order;
+    }
 
-        [Fact]
-        public void ThenLineItemExistsInOrder()
-        {
-            var lineItem = new LineItem(_order.Id, _product, 4.78m);
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void ThenLineItemsExistsInOrder(List<Kernel.LineItem> lineItems)
+    {
+        var order = CreateOrder(lineItems);
 
-            _order.Add(lineItem);
+        order.LineItems[0].Should().NotBeNull();
+        order.LineItems[1].Should().NotBeNull();
+    }
 
-            _order.LineItems.Should().Contain(lineItem);
-        }
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void ThenLineItemsQuantityIsUpdated(List<Kernel.LineItem> lineItems)
+    {
 
-        [Fact]
-        public void ThenLineItemQuantityIsUpdated()
-        {
-            var lineItem = new LineItem(_order.Id, _product, 2.75m);
+        var order = CreateOrder(lineItems);
+        order.LineItems[0].Quantity.Should().Be(6);
+        order.LineItems[1].Quantity.Should().Be(7);
+    }
 
-            _order.Add(lineItem);
-            _order.Add(lineItem);
+    [Theory]
+    [MemberData(nameof(LineItems))]
+    public void ThenSubtotalIsUpdated(List<Kernel.LineItem> lineItems)
+    {
+        var order = CreateOrder(lineItems);
 
-            _order.LineItems[0].Quantity.Should().Be(2);
-        }
+        var expectedSubtotal = 4.99m + 8.99m;
 
-        [Fact]
-        public void ThenEachLineItemQuantityIsUpdated()
-        {
-            var lineItem = new LineItem(_order.Id, _product, 7.89m);
-            var lineItem2 = new LineItem(_order.Id, _product2, 7.89m);
-
-            _order.Add(lineItem);
-            _order.Add(lineItem);
-            _order.Add(lineItem2);
-            _order.Add(lineItem2);
-            _order.Add(lineItem2);
-
-            _order.LineItems[0].Quantity.Should().Be(2);
-            _order.LineItems[2].Quantity.Should().Be(3);
-        }
-
-        [Fact]
-        public void WithMultipleLineItems_ThenOrderContainsAll()
-        {
-            var lineItem = new LineItem(_order.Id, _product, 4.67m);
-            var lineItem2 = new LineItem(_order.Id, _product2, 7.89m);
-            _order.Add(lineItem);
-            _order.Add(lineItem2);
-
-            using var scope = new AssertionScope();
-            _order.LineItems.Should().Contain(lineItem);
-            _order.LineItems.Should().Contain(lineItem2);
-        }
-
-        [Fact]
-        public void WithOnlyOneLineItem_ThenSubtotalIsUpdated()
-        {
-            var lineItem = new LineItem(_order.Id, _product, 2.99m);
-            _order.Add(lineItem);
-            _order.CalculateSubtotal();
-
-            var expectedSubtotal = 2.99m;
-
-            _order.Subtotal.Should().Be(expectedSubtotal);
-        }
-
-        [Fact]
-        public void WithMultipleLineItems_ThenSubtotalIsUpdated()
-        {
-            var lineItem = new LineItem(_order.Id, _product, 7.89m);
-            var lineItem2 = new LineItem(_order.Id, _product2, 5.99m);
-            _order.Add(lineItem);
-            _order.Add(lineItem2);
-
-            _order.CalculateSubtotal();
-
-            var expectedSubtotal = 7.89m + 5.99m;
-
-            _order.Subtotal.Should().Be(expectedSubtotal);
-        }
+        order.Subtotal.Should().Be(expectedSubtotal);
     }
 }
