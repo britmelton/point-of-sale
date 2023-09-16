@@ -1,100 +1,73 @@
-﻿using Domain.Spec.Kernel;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using static Domain.Spec.Kernel.ObjectProvider;
 
 namespace Domain.Spec;
 
 public class WhenRemovingLineItemFromOrder
 {
-    private static readonly Product _product = new("product1", 3.99m, "abc345");
-    private static readonly Product _product2 = new("product2", 4.99m, "abc789");
-    private static readonly Product _product3 = new("product3", 6.99m, "abc749");
-    private static readonly Kernel.LineItem _lineItem = new(_product.Id, 6, 4.99m);
-    private static readonly Kernel.LineItem _lineItem2 = new(_product2.Id, 7, 8.99m);
-    private static readonly Kernel.LineItem _lineItem3 = new(_product3.Id, 8, 5.89m);
+    private Order _order;
 
-    public static IEnumerable<object[]> LineItems()
+    public WhenRemovingLineItemFromOrder()
     {
-        yield return new object[] { new List<Kernel.LineItem>() { _lineItem, _lineItem2, _lineItem3 } };
+        _order = SubmitOrder(LineItems2);
     }
 
-    public static Order SubmitOrder(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenLineItemDoesNotExistInOrder()
     {
-        var order = new UnitTestOrderBuilder()
-            .Load(lineItems)
-            .Build()
-            .GetOrder();
-        order.Submit();
-        return order;
+        var lineItem = _order.LineItems[0];
+        _order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
+
+        _order.LineItems.Should().NotContain(lineItem);
     }
 
-
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenLineItemDoesNotExistInOrder(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenLineItemQuantityIsUpdated()
     {
-        var order = SubmitOrder(lineItems);
-        var lineItem = order.LineItems[0];
+        var lineItem = _order.LineItems[0];
+        var expectedQuantity = lineItem.Quantity - 4;
 
-        order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
+        _order.RemoveLineItem(lineItem.Id, 4);
 
-        order.LineItems.Should().NotContain(lineItem);
+        _order.LineItems[0].Quantity.Should().Be((ushort)expectedQuantity);
     }
 
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenLineItemQuantityIsUpdated(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenLineItemSubtotalIsUpdated()
     {
-        var order = SubmitOrder(lineItems);
-        var lineItem = order.LineItems[0];
+        var lineItem = _order.LineItems[0];
+        _order.RemoveLineItem(lineItem.Id, 4);
 
-        order.RemoveLineItem(lineItem.Id, 4);
-
-        order.LineItems[0].Quantity.Should().Be(2);
+        var expectedSubtotal = lineItem.Price * lineItem.Quantity;
+        _order.LineItems[0].Subtotal.Should().Be(expectedSubtotal);
     }
 
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenLineItemTotalIsUpdated(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenSubtotalIsUpdated()
     {
-        var order = SubmitOrder(lineItems);
-        var lineItem = order.LineItems[0];
+        var lineItem = _order.LineItems[0];
+        var lineItem2 = _order.LineItems[1];
+        var lineItem3 = _order.LineItems[2];
 
-        order.RemoveLineItem(lineItem.Id, 4);
-
-        order.LineItems[0].Subtotal.Should().Be(9.98m);
-    }
-
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void WhereMultipleLineItemsAreRemoved_ThenLineItemsDoNotExistInOrder(List<Kernel.LineItem> lineItems)
-    {
-        var order = SubmitOrder(lineItems);
-        var lineItem = order.LineItems[0];
-        var lineItem2 = order.LineItems[1];
-
-        order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
-        order.RemoveLineItem(lineItem2.Id, lineItem2.Quantity);
-
-        using var scope = new AssertionScope();
-        order.LineItems.Should().NotContain(lineItem);
-        order.LineItems.Should().NotContain(lineItem2);
-    }
-
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenSubtotalIsUpdated(List<Kernel.LineItem> lineItems)
-    {
-        var order = SubmitOrder(lineItems);
-        var lineItem = order.LineItems[0];
-        var lineItem2 = order.LineItems[1];
-        var lineItem3 = order.LineItems[2];
-
-        order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
-        order.RemoveLineItem(lineItem2.Id, lineItem2.Quantity);
+        _order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
+        _order.RemoveLineItem(lineItem2.Id, lineItem2.Quantity);
 
         var expectedSubtotal = lineItem3.Price * lineItem3.Quantity;
+        _order.Subtotal.Should().Be(expectedSubtotal);
+    }
 
-        order.Subtotal.Should().Be(expectedSubtotal);
+    [Fact]
+    public void WhereMultipleLineItemsAreRemoved_ThenLineItemsDoNotExistInOrder()
+    {
+        var lineItem = _order.LineItems[0];
+        var lineItem2 = _order.LineItems[1];
+
+        _order.RemoveLineItem(lineItem.Id, lineItem.Quantity);
+        _order.RemoveLineItem(lineItem2.Id, lineItem2.Quantity);
+
+        using var scope = new AssertionScope();
+        _order.LineItems.Should().NotContain(lineItem);
+        _order.LineItems.Should().NotContain(lineItem2);
     }
 }

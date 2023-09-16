@@ -1,79 +1,52 @@
-﻿using Domain.Spec.Kernel;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using static Domain.Spec.Kernel.ObjectProvider;
 
 namespace Domain.Spec;
 
 public class WhenSubmittingAnOrder
 {
-    private static readonly Product _product = new("product1", 3.99m, "abc345");
-    private static readonly Product _product2 = new("product2", 4.99m, "abc789");
-    private static readonly Kernel.LineItem _lineItem = new(_product.Id, 6, 4.99m);
-    private static readonly Kernel.LineItem _lineItem2 = new(_product2.Id, 7, 8.99m);
+    private Order _order;
 
-    public static IEnumerable<object[]> LineItems()
+    public WhenSubmittingAnOrder()
     {
-        yield return new object[] { new List<Kernel.LineItem>() { _lineItem, _lineItem2 } };
+        _order = SubmitOrder(LineItems);
     }
 
-    public static Order SubmitOrder(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenIdIsSet()
     {
-        var order = new UnitTestOrderBuilder()
-            .Load(lineItems)
-            .Build()
-            .GetOrder();
-        order.Submit();
-        return order;
+        _order.Id.Should().NotBeEmpty();
     }
 
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenIdIsSet(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenOrderNumberIsSet()
     {
-        var order = SubmitOrder(lineItems);
-
-        order.Id.Should().NotBeEmpty();
+        _order.OrderNumber.Should().NotBeNullOrEmpty();
     }
 
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenOrderNumberIsSet(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenLineItemsExistInOrder()
     {
-        var order = SubmitOrder(lineItems);
-
-        order.OrderNumber.Should().NotBeNullOrEmpty();
+        _order.LineItems.Should().HaveCount(2);
     }
 
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenLineItemsExistInOrder(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenIsCompletedIsTrue()
     {
-        var order = SubmitOrder(lineItems);
-
-        order.LineItems.Should().HaveCount(2);
+        _order.IsComplete.Should().BeTrue();
     }
 
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenIsCompletedIsTrue(List<Kernel.LineItem> lineItems)
+    [Fact]
+    public void ThenTotalIsSet()
     {
-        var order = SubmitOrder(lineItems);
+        var lineItem = _order.LineItems[0];
+        var lineItem2 = _order.LineItems[1];
 
-        order.IsComplete.Should().BeTrue();
-    }
-
-    [Theory]
-    [MemberData(nameof(LineItems))]
-    public void ThenTotalIsSet(List<Kernel.LineItem> lineItems)
-    {
-        var order = SubmitOrder(lineItems);
-        var lineItem = order.LineItems[0];
-        var lineItem2 = order.LineItems[1];
-
-        var expectedTotal = lineItem.Price * lineItem.Quantity + lineItem2.Price * lineItem2.Quantity;
+        var expectedTotal = (lineItem.Price * lineItem.Quantity) + (lineItem2.Price * lineItem2.Quantity);
 
         using var scope = new AssertionScope();
-        order.Total.Should().NotBe(0);
-        order.Total.Should().Be(expectedTotal);
+        _order.Total.Should().NotBe(0);
+        _order.Total.Should().Be(expectedTotal);
     }
 }
