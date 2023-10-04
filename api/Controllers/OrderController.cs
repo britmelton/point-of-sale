@@ -2,38 +2,38 @@
 using App.Services;
 using Infrastructure.Read;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Api.Controllers
+namespace Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class OrderController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class OrderController : ControllerBase
+    private readonly IOrderReadService _orderReadService;
+    private readonly IOrderService _orderService;
+
+    public OrderController(IOrderReadService orderReadService, IOrderService orderService)
     {
-        private readonly IOrderReadService _orderReadService;
-        private readonly IOrderService _orderService;
+        _orderReadService = orderReadService;
+        _orderService = orderService;
+    }
 
-        public OrderController(IOrderReadService orderReadService, IOrderService orderService)
-        {
-            _orderReadService = orderReadService;
-            _orderService = orderService;
-        }
+    [HttpPost]
+    public IActionResult SubmitOrder([FromBody] SubmitOrder dto)
+    {
+        var lineItems = dto.LineItems;
+        var command = new SubmitOrderCommand(lineItems.Select(li => (App.Services.LineItem)li).ToList());
 
-        [HttpPost]
-        public IActionResult SubmitOrder([FromBody] SubmitOrder dto)
-        {
-            var lineItems = dto.LineItems;
-            var command = new SubmitOrderCommand(lineItems.Select(li => (App.Services.LineItem)li).ToList());
+        var orderId = _orderService.SubmitOrder(command);
+        return CreatedAtRoute(nameof(Find), new { id = orderId }, null);
+    }
 
-            var orderId = _orderService.SubmitOrder(command);
-            return CreatedAtRoute(nameof(Find), new { id = orderId }, null);
-        }
+    [HttpGet("{id}", Name = "Find")]
+    public IActionResult Find(Guid id)
+    {
+        var order = _orderReadService.Find(id);
 
-        [HttpGet("{id}", Name = "Find")]
-        public IActionResult Find(Guid id)
-        {
-            var order = _orderReadService.Find(id);
-
-            return Ok(order);
-        }
+        return Ok(order);
     }
 }

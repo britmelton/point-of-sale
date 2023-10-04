@@ -2,19 +2,19 @@
 
 namespace Infrastructure.Write;
 
-public class LineItem : Entity
+public class CartLineItem : Entity
 {
-    public LineItem() { }
-    public LineItem(Domain.LineItem lineItem) : base(lineItem.Id)
+    public CartLineItem() { }
+    public CartLineItem(Domain.CartLineItem lineItem) : base(lineItem.Id)
     {
-        OrderId = lineItem.OrderId;
         Price = lineItem.Price;
         ProductId = lineItem.ProductId;
         Quantity = lineItem.Quantity;
         Subtotal = lineItem.Subtotal;
     }
 
-    public Guid OrderId { get; set; }
+    public Guid CartId { get; set; }
+
     [Precision(6, 2)]
     public decimal Price { get; set; }
     public Guid ProductId { get; set; }
@@ -23,7 +23,7 @@ public class LineItem : Entity
     public decimal Subtotal { get; set; }
 
 
-    public static implicit operator Domain.LineItem(LineItem source) => new(source.OrderId, source.ProductId, source.Price, source.Quantity, source.Id);
+    public static implicit operator Domain.CartLineItem(CartLineItem source) => new(source.ProductId, source.Price, source.Quantity, source.Id);
 
-    public static implicit operator LineItem(Domain.LineItem source) => new(source);
+    public static implicit operator CartLineItem(Domain.CartLineItem source) => new(source);
 }

@@ -1,9 +1,7 @@
-﻿using Domain;
+﻿namespace App.Services;
 
-namespace App.Services
+public interface IOrderService
 {
-    public interface IOrderService
-    {
-        public Guid SubmitOrder(SubmitOrderCommand args);
-    }
+    public Guid SubmitOrder(SubmitOrderCommand args);
+
 }

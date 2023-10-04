@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using Api.DataContracts;
 using Api.Spec.Setup;
-using Domain;
 using FluentAssertions;
 using Infrastructure.Read;
 using LineItem = Api.DataContracts.LineItem;
@@ -17,11 +16,10 @@ namespace Api.Spec
         [Fact]
         public async void ThenOrderExists()
         {
-            var product = new Product("name", 4.99m, "abc123", 35);
+            var product = new Domain.Product("name", 4.99m, "abc123", 35);
             var lineItem = new LineItem(product.Id,3, 5.99m);
 
             var dto = new SubmitOrder(new(){lineItem});
-
             var result = await HttpClient.PostAsJsonAsync("", dto);
 
             var readService = Resolve<IOrderReadService>();

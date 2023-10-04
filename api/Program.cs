@@ -22,6 +22,14 @@ builder.Services.AddTransient<IOrderReadService, OrderReadService>();
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 
+builder.Services.AddTransient<IProductReadService, ProductReadService>();
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<IProductService, ProductService>();
+
+builder.Services.AddTransient<ICartReadService, CartReadService>();
+builder.Services.AddTransient<ICartRepository, CartRepository>();
+builder.Services.AddTransient<ICartService, CartService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

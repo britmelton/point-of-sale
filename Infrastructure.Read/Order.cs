@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Read;
+﻿using Infrastructure.Read.Dtos;
+
+namespace Infrastructure.Read;
 
 public class Order //reps order Table
 {

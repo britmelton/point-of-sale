@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Read;
+﻿namespace Infrastructure.Read.Dtos;
 
 public class LineItem
 {
@@ -9,7 +9,7 @@ public class LineItem
     public Guid ProductId { get; init; }
     public decimal Price { get; init; }
     public ushort Quantity { get; init; }
-    public decimal Subtotal { get; init;}
+    public decimal Subtotal { get; init; }
 
     #endregion
 }

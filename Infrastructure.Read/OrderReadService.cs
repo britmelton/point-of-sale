@@ -1,30 +1,30 @@
 ﻿using Dapper;
+using Infrastructure.Read.Dtos;
 using System.Data.SqlClient;
 
-namespace Infrastructure.Read
+namespace Infrastructure.Read;
+
+public class OrderReadService : IOrderReadService
 {
-    public class OrderReadService : IOrderReadService
+    public OrderDto Find(Guid id)
     {
-        public OrderDto Find(Guid id)
-        {
-            using var connection = new SqlConnection("Server=SUGA;Database=pointofsale;Integrated Security=true;TrustServerCertificate=true;");
-            connection.Open();
+        using var connection = new SqlConnection("Server=SUGA;Database=pointofsale;Integrated Security=true;TrustServerCertificate=true;");
+        connection.Open();
 
-            OrderDto? order = null;
+        OrderDto? order = null;
 
-            connection.Query<Order, LineItem, OrderDto>(
-                @"SELECT * FROM [Order] AS o JOIN LineItem AS li ON li.OrderId = o.Id WHERE o.Id = @id ",
-                (o,li) =>
-                {
-                    order ??= o;
-                    order.Add(li);
+        connection.Query<Order, LineItem, OrderDto>(
+            @"SELECT * FROM [Order] AS o JOIN LineItem AS li ON li.OrderId = o.Id WHERE o.Id = @id ",
+            (o, li) =>
+            {
+                order ??= o;
+                order.Add(li);
 
-                    return null;
-                },
-                new{id},
-                splitOn: "Id"
-            );
-             return order;
-        }
+                return null;
+            },
+            new { id },
+            splitOn: "Id"
+        );
+        return order;
     }
 }
