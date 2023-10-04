@@ -20,17 +20,19 @@ public class Cart : Entity
 
     #region Public Interface
 
-    public List<CartLineItem>? LineItems { get; set; }
+    public List<CartLineItem>? LineItems { get; set; } = new();
 
-    [Precision(6, 2)] public decimal? Subtotal { get; set; }
+    [Precision(6, 2)] 
+    public decimal? Subtotal { get; set; }
 
     public Cart Update(Domain.Cart cart)
     {
-        LineItems.AddRange(cart.LineItems.Select(li => (CartLineItem) li));
-        foreach (var li in LineItems)
+        var tempLineitems = cart.LineItems.Select(li => (CartLineItem) li).ToList();
+        foreach (var li in tempLineitems)
         {
             li.CartId = cart.Id;
         }
+        LineItems.AddRange(tempLineitems);
 
         Subtotal = cart.Subtotal;
 
