@@ -23,7 +23,8 @@ public class CartLineItem : Entity
     public decimal Subtotal { get; set; }
 
 
-    public static implicit operator Domain.CartLineItem(CartLineItem source) => new(source.ProductId, source.Price, source.Quantity, source.Id);
+    public static implicit operator Domain.CartLineItem(CartLineItem source) =>
+        new(source.ProductId, source.Price, source.Quantity, source.Id);
 
     public static implicit operator CartLineItem(Domain.CartLineItem source) => new(source);
 }

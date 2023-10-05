@@ -27,14 +27,15 @@ public record AddLineItems(
 }
 
 public record CartLineItem(
+    Guid CartId,
     Guid ProductId,
         ushort Quantity,
         decimal Price
 )
     {
         public static implicit operator CartLineItem(App.Services.CartLineItem source) =>
-        new(source.ProductId, source.Quantity, source.Price);
+        new(source.CartId, source.ProductId, source.Quantity, source.Price);
 
         public static implicit operator App.Services.CartLineItem(CartLineItem source) =>
-        new(source.ProductId, source.Quantity, source.Price);
+        new(source.CartId, source.ProductId, source.Quantity, source.Price);
     }

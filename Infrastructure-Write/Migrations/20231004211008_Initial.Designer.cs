@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Write.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230915150222_RenamedIsComplete")]
-    partial class RenamedIsComplete
+    [Migration("20231004211008_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,51 @@ namespace Infrastructure.Write.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Infrastructure.Write.Cart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Subtotal")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cart");
+                });
+
+            modelBuilder.Entity("Infrastructure.Write.CartLineItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.ToTable("CartLineItem");
+                });
 
             modelBuilder.Entity("Infrastructure.Write.LineItem", b =>
                 {
@@ -43,6 +88,10 @@ namespace Infrastructure.Write.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.HasKey("Id");
 
@@ -103,6 +152,15 @@ namespace Infrastructure.Write.Migrations
                     b.ToTable("Product");
                 });
 
+            modelBuilder.Entity("Infrastructure.Write.CartLineItem", b =>
+                {
+                    b.HasOne("Infrastructure.Write.Cart", null)
+                        .WithMany("LineItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Infrastructure.Write.LineItem", b =>
                 {
                     b.HasOne("Infrastructure.Write.Order", null)
@@ -110,6 +168,11 @@ namespace Infrastructure.Write.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Infrastructure.Write.Cart", b =>
+                {
+                    b.Navigation("LineItems");
                 });
 
             modelBuilder.Entity("Infrastructure.Write.Order", b =>

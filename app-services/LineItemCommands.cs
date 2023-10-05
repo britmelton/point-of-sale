@@ -6,6 +6,7 @@ public record AddLineItemsCommand(
     );
 
 public record CartLineItem(
+    Guid CartId,
     Guid ProductId,
     ushort Quantity,
     decimal Price

@@ -34,8 +34,7 @@ public class CartController : ControllerBase
     [HttpPost]
     public IActionResult GenerateCart()
     {
-       var id =  _cartService.GenerateCart();
-
-       return CreatedAtRoute("FindCart", new { id }, null);
+        var id = _cartService.GenerateCart();
+        return CreatedAtRoute("FindCart", new { id }, null);
     }
 }

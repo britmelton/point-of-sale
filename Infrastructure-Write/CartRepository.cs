@@ -33,8 +33,6 @@ public class CartRepository : ICartRepository
             .First(x => x.Id == cart.Id);
         dbCart.Update(cart);
 
-        _context.Cart.Update(dbCart);
-
         _context.SaveChanges();
     }
 }

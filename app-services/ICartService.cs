@@ -7,4 +7,3 @@ namespace App.Services;
         public Cart Add(AddLineItemsCommand args);
         public Guid GenerateCart();
     }
-

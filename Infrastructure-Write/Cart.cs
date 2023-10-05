@@ -7,8 +7,7 @@ public class Cart : Entity
     #region Creation
 
     public Cart()
-    {
-    }
+    { }
 
     public Cart(Domain.Cart cart) : base(cart.Id)
     {
@@ -20,20 +19,14 @@ public class Cart : Entity
 
     #region Public Interface
 
-    public List<CartLineItem>? LineItems { get; set; } = new();
+    public List<CartLineItem> LineItems { get; set; } = new();
 
     [Precision(6, 2)] 
     public decimal? Subtotal { get; set; }
 
     public Cart Update(Domain.Cart cart)
     {
-        var tempLineitems = cart.LineItems.Select(li => (CartLineItem) li).ToList();
-        foreach (var li in tempLineitems)
-        {
-            li.CartId = cart.Id;
-        }
-        LineItems.AddRange(tempLineitems);
-
+        LineItems = cart.LineItems.Select(li => (CartLineItem)li).ToList();
         Subtotal = cart.Subtotal;
 
         return this;
