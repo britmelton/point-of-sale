@@ -26,12 +26,14 @@ public class Cart : Entity
 
     public Cart Update(Domain.Cart cart)
     {
-        LineItems = cart.LineItems.Select(li => (CartLineItem)li).ToList();
         Subtotal = cart.Subtotal;
+
+        foreach (var li in cart.LineItems.Select(li => new CartLineItem(li)))
+            if (LineItems.All(x => x.Id != li.Id))
+                LineItems.Add(li);
 
         return this;
     }
-
     #endregion
 
     #region Static Interface
